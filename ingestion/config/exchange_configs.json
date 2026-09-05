@@ -1,0 +1,119 @@
+{
+    "exchange_configs": {
+        "binance": {
+            "active": false,
+            "api_url": "https://api.binance.com/api/v3/klines",
+            "rate_limit": 0.125,
+            "rate_limit_fetch_all": 0.125,
+            "max_concurrency": 20,
+            "backoff_429_base": 2.0,
+            "max_backoff": 30.0,
+            "format": {
+                "params": {
+                    "symbol": {
+                        "value": "{symbol}"
+                    },
+                    "interval": {
+                        "value": "{timeframe}"
+                    },
+                    "limit": {
+                        "value": 1000
+                    },
+                    "startTime": {
+                        "value": "{start}"
+                    },
+                    "endTime": {
+                        "value": "{end}"
+                    }
+                },
+                "response_type": "array",
+                "mapping": {
+                    "timestamp": {
+                        "key": 0,
+                        "type": "int64"
+                    },
+                    "open": {
+                        "key": 1,
+                        "type": "float64"
+                    },
+                    "high": {
+                        "key": 2,
+                        "type": "float64"
+                    },
+                    "low": {
+                        "key": 3,
+                        "type": "float64"
+                    },
+                    "close": {
+                        "key": 4,
+                        "type": "float64"
+                    },
+                    "volume": {
+                        "key": 5,
+                        "type": "float64"
+                    }
+                },
+                "timestamp_multiplier": 1
+            }
+        },
+        "bitstamp": {
+            "active": true,
+            "api_url": "https://www.bitstamp.net/api/v2/ohlc/{symbol}/",
+            "rate_limit": 0.25,
+            "rate_limit_fetch_all": 0.25,
+            "max_concurrency": 20,
+            "backoff_429_base": 2.0,
+            "max_backoff": 30.0,
+            "timestamp_format": "seconds",
+            "timeframe_format": "seconds",
+            "format": {
+                "params": {
+                    "step": {
+                        "value": "{timeframe}"
+                    },
+                    "limit": {
+                        "value": 1000
+                    },
+                    "start": {
+                        "value": "{start}"
+                    },
+                    "end": {
+                        "value": "{end}"
+                    }
+                },
+                "response_type": "object",
+                "data_path": [
+                    "data",
+                    "ohlc"
+                ],
+                "mapping": {
+                    "timestamp": {
+                        "key": "timestamp",
+                        "type": "int64"
+                    },
+                    "open": {
+                        "key": "open",
+                        "type": "float64"
+                    },
+                    "high": {
+                        "key": "high",
+                        "type": "float64"
+                    },
+                    "low": {
+                        "key": "low",
+                        "type": "float64"
+                    },
+                    "close": {
+                        "key": "close",
+                        "type": "float64"
+                    },
+                    "volume": {
+                        "key": "volume",
+                        "type": "float64"
+                    }
+                },
+                "timestamp_multiplier": 1000
+            }
+        }
+    }
+}

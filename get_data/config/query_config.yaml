@@ -1,0 +1,15 @@
+# Query Configuration for Training Data
+# Cấu hình để query data từ TileDB cho AI training
+
+query_mode:
+  unlimited: true  # true = query toàn bộ, false = query từ start_date
+  # "Gạt cầu dao": ON (true) = unlimited, OFF (false) = from_date
+
+# Start date (chỉ dùng khi unlimited = false)
+start_date:
+  year: 2024
+  month: 7
+  day: 1
+
+# Query performance settings
+max_workers: 8  # Số threads cho multi-threading (1-16)

@@ -1,0 +1,12 @@
+# Runtime dependencies for the ingestion daemon and the query layer.
+# Pinned to the versions this project is developed and tested against.
+#
+# Every one of these is a C/C++/Rust-backed library: the pipeline never
+# does per-candle work in interpreted Python.
+
+aiohttp==3.13.5        # async HTTP, C parser (llhttp)
+numpy==2.4.6           # every candle array; all maths is vectorized here
+orjson==3.11.9         # Rust JSON — response + config parsing
+picologging==0.9.3     # C reimplementation of stdlib logging
+PyYAML==6.0.3          # query config; loaded via CSafeLoader (libyaml C)
+tiledb==0.36.1         # sparse array storage engine (C++)

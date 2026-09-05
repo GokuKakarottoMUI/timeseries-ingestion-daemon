@@ -1,0 +1,24 @@
+{
+    "fetch_mode": {
+        "continuous": {
+            "name": "continuous",
+            "value": false
+        },
+        "fetch_interval": {
+            "name": "fetch_interval",
+            "value": 0
+        },
+        "sleep_interval": {
+            "name": "sleep_interval",
+            "value": 30
+        },
+        "continuous_sleep_interval": {
+            "name": "continuous_sleep_interval",
+            "value": 1
+        },
+        "rss_restart_mb": {
+            "name": "rss_restart_mb",
+            "value": 1536
+        }
+    }
+}

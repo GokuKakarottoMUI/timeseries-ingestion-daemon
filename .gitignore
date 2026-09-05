@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+
+# Data written by the daemon — TileDB arrays, lock files, fetch cache.
+# Everything lives under DATABASE_ROOT_PATH, which defaults to ./data
+data/
+
+# Editor / tooling
+.vscode/
+.idea/
+.claude/
+
+# Personal documents that are not part of the project
+CV.tex
+CV.pdf
+
+# LaTeX build artefacts
+*.aux
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.synctex.gz

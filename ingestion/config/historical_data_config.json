@@ -1,0 +1,72 @@
+{
+    "historical_data": {
+        "start_date": {
+            "year": {
+                "value": 2026,
+                "type": "int"
+            },
+            "month": {
+                "value": 5,
+                "type": "int"
+            },
+            "day": {
+                "value": 22,
+                "type": "int"
+            }
+        },
+        "fetch_all": {
+            "active": {
+                "value": false,
+                "type": "bool"
+            }
+        },
+        "scan_missing_timestamps": {
+            "active": {
+                "value": false,
+                "type": "bool"
+            }
+        },
+        "multi_fetch": {
+            "active": {
+                "value": true,
+                "type": "bool"
+            },
+            "unlimited": {
+                "value": true,
+                "type": "bool"
+            },
+            "max_workers": {
+                "value": 5,
+                "type": "int"
+            }
+        },
+        "multi_write": {
+            "active": {
+                "value": true,
+                "type": "bool"
+            },
+            "unlimited": {
+                "value": true,
+                "type": "bool"
+            },
+            "max_workers": {
+                "value": 10,
+                "type": "int"
+            }
+        },
+        "write_rate": {
+            "unlimited": {
+                "value": true,
+                "type": "bool"
+            },
+            "default": {
+                "value": 1000,
+                "type": "int"
+            },
+            "fetch_all": {
+                "value": 5000,
+                "type": "int"
+            }
+        }
+    }
+}

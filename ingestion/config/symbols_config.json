@@ -1,0 +1,58 @@
+{
+    "market": {
+        "Cryptocurrency": {
+            "active": true,
+            "symbols_config": {
+                "BTC": {
+                    "active": true,
+                    "symbols": {
+                        "BTCUSD": {
+                            "active": true,
+                            "variants": {
+                                "BTCUSDT": {
+                                    "active": false
+                                },
+                                "BTCUSD": {
+                                    "active": true
+                                },
+                                "btcusd": {
+                                    "active": true
+                                },
+                                "XBTUSD": {
+                                    "active": false
+                                }
+                            }
+                        }
+                    }
+                },
+                "ETH": {
+                    "active": false,
+                    "symbols": {
+                        "ETHUSD": {
+                            "active": false,
+                            "variants": {
+                                "ETHUSDT": {
+                                    "active": false
+                                },
+                                "ethusd": {
+                                    "active": true
+                                }
+                            }
+                        },
+                        "ETHBTC": {
+                            "active": false,
+                            "variants": {
+                                "ETHBTC": {
+                                    "active": true
+                                },
+                                "ethbtc": {
+                                    "active": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

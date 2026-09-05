@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timeseries-ingestion-daemon"
+version = "1.0.0"
+description = "Async multi-exchange OHLCV ingestion daemon with zero-copy TileDB storage"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+keywords = ["timeseries", "ohlcv", "tiledb", "asyncio", "zero-copy", "market-data"]
+
+dependencies = [
+    "aiohttp==3.13.5",
+    "numpy==2.4.6",
+    "orjson==3.11.9",
+    "picologging==0.9.3",
+    "PyYAML==6.0.3",
+    "tiledb==0.36.1",
+]
+
+[project.optional-dependencies]
+gui = ["PySide6==6.11.1"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+packages = ["ingestion", "ingestion.config", "get_data", "get_data.config"]
+
+[tool.setuptools.package-data]
+"ingestion.config" = ["*.json"]
+"get_data.config" = ["*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

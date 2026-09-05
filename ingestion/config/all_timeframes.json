@@ -1,0 +1,184 @@
+{
+    "timeframes": {
+        "1m": {
+            "active": false,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 1,
+            "seconds": 60
+        },
+        "3m": {
+            "active": false,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 3,
+            "seconds": 180
+        },
+        "5m": {
+            "active": false,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 5,
+            "seconds": 300
+        },
+        "15m": {
+            "active": true,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 15,
+            "seconds": 900
+        },
+        "30m": {
+            "active": true,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 30,
+            "seconds": 1800
+        },
+        "1h": {
+            "active": true,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 60,
+            "seconds": 3600,
+            "hours": 1
+        },
+        "2h": {
+            "active": true,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 120,
+            "seconds": 7200,
+            "hours": 2
+        },
+        "3h": {
+            "active": false,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 180,
+            "seconds": 10800,
+            "hours": 3
+        },
+        "4h": {
+            "active": true,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 240,
+            "seconds": 14400,
+            "hours": 4
+        },
+        "6h": {
+            "active": false,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 360,
+            "seconds": 21600,
+            "hours": 6
+        },
+        "8h": {
+            "active": false,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 480,
+            "seconds": 28800,
+            "hours": 8
+        },
+        "12h": {
+            "active": true,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 720,
+            "seconds": 43200,
+            "hours": 12
+        },
+        "1d": {
+            "active": true,
+            "active_featured": false,
+            "active_prediction": false,
+            "minutes": 1440,
+            "seconds": 86400,
+            "hours": 24
+        }
+    },
+    "custom_timeframes": {
+        "enable": false,
+        "custom_intervals": {
+            "11m": {
+                "active": false,
+                "active_featured": false,
+                "active_prediction": false,
+                "minutes": 11,
+                "source": "1m"
+            },
+            "22m": {
+                "active": false,
+                "active_featured": false,
+                "active_prediction": false,
+                "minutes": 22,
+                "source": "1m"
+            },
+            "45m": {
+                "active": false,
+                "active_featured": false,
+                "active_prediction": false,
+                "minutes": 45,
+                "source": "15m"
+            },
+            "90m": {
+                "active": false,
+                "active_featured": false,
+                "active_prediction": false,
+                "minutes": 90,
+                "source": "30m"
+            },
+            "3h": {
+                "active": false,
+                "active_featured": false,
+                "active_prediction": false,
+                "minutes": 180,
+                "source": "1h",
+                "hours": 3
+            },
+            "6h": {
+                "active": false,
+                "active_featured": false,
+                "active_prediction": false,
+                "minutes": 360,
+                "source": "3h",
+                "hours": 6
+            },
+            "8h": {
+                "active": false,
+                "active_featured": false,
+                "active_prediction": false,
+                "minutes": 480,
+                "source": "1h",
+                "hours": 8
+            },
+            "2d": {
+                "active": true,
+                "active_featured": true,
+                "active_prediction": false,
+                "minutes": 2880,
+                "source": "1d",
+                "hours": 48
+            },
+            "3d": {
+                "active": true,
+                "active_featured": true,
+                "active_prediction": false,
+                "minutes": 4320,
+                "source": "1d",
+                "hours": 72
+            },
+            "8d": {
+                "active": false,
+                "active_featured": false,
+                "active_prediction": false,
+                "minutes": 11520,
+                "source": "1d",
+                "hours": 192
+            }
+        }
+    }
+}
