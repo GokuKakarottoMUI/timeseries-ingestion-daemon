@@ -14,6 +14,8 @@ candles.
 
 ## Architecture
 
+### Ingestion and read path
+
 ```
    exchange REST APIs
            │  aiohttp, per-exchange rate limiter + 429 backoff
@@ -45,6 +47,76 @@ candles.
 Storing every timeframe of a symbol inside **one** array (rather than one array per timeframe) is
 what lets the read path open a single handle per symbol and slice each timeframe off it, instead of
 paying an open + fragment-list fetch per timeframe.
+
+### Building custom timeframes (phase 2)
+
+Phase 1 stores the timeframes the exchange actually serves. Phase 2 derives the non-standard ones
+(11m, 45m, 90m, 2d, 8d …) from what is already on disk, so the exchange is hit once per base candle
+and never again for a derived one.
+
+```
+   for each (symbol, custom timeframe)
+           │
+           ▼
+   CacheManager                which slots are genuinely missing
+           │                   nothing missing → skip the source query entirely
+           ▼
+   dependency layers           regular TF = level 0, custom TF = level(source) + 1
+           │                   a chain like 1h → 3h → 6h therefore needs two layers
+           ▼
+   ┌────────────────── layer 0 ──────────────────┐   sources inside a layer run in
+   │   source 1d ──┬──► 2d                       │   parallel; layers run strictly in
+   │               └──► 3d                       │   order, because layer N+1 reads
+   └─────────────────────────────────────────────┘   what layer N has just written
+           │   … layer 1, layer 2, same shape        (buffer flushed after each layer)
+           ▼
+   query_candles               read the base OHLCV back → (N, 6) float64
+           │                   range clamped to [slot_min, slot_max + target]
+           ▼
+   _aggregate_candles_batch    searchsorted → slot id per candle, then
+           │                   maximum/minimum/add.reduceat per group
+           │                   open = first of slot, close = last of slot
+           │                   no Python loop over candles at any point
+           ▼
+   TensorBuffer → TileDB       written back into the SAME array,
+                               under a different timeframe_minutes coordinate
+```
+
+### Daemon cycle
+
+`continuous_fetch` is meant to stay up for weeks, so the loop is built around returning memory and
+never carrying state across a cycle boundary.
+
+```
+   _tune_malloc()          mallopt: pin mmap/trim thresholds, cap arenas at 4
+           │               must run BEFORE any thread exists
+           ▼
+   cold start (once)       precompute → prime executors → prewarm DNS
+           │               gc.collect() + gc.freeze(): config, TileDB ctx, session
+           │               and executors are immutable for the run, so the GC
+           │               never rescans them again
+           ▼
+   ┌───►  fetch pass (phase 1)         symbols × timeframes, one shared event loop
+   │           │
+   │           ▼
+   │      aggregate custom TF          skipped when no new slot needs building
+   │           │
+   │           ▼
+   │      consolidate + vacuum         only if this cycle actually wrote candles;
+   │           │                       holds the flock EXCLUSIVE for its duration
+   │           ▼
+   │      drain TensorBuffer           leftovers never cross into the next cycle
+   │           │
+   │           ▼
+   │      gc.collect() + malloc_trim   hand the heap back to the OS while idle
+   │           │
+   │           ▼
+   │      RSS over ceiling? ──yes──►   flush logs, then os.execv(self)
+   │           │                       libtiledb leaks a little per sparse read and
+   │           no                      it cannot be reclaimed in-process, so the
+   │           ▼                       only honest fix is a clean restart at the
+   └──── sleep(interval)               cycle boundary
+```
 
 ---
 
