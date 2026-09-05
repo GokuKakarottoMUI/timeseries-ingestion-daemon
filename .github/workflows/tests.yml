@@ -1,0 +1,36 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      # Base install only: no torch, no PySide6. The suite needs neither, and
+      # keeping them out here proves the optional dependencies really are
+      # optional — the torch hand-off test skips instead of failing.
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest -q -rs
+
+      # The suite must not depend on network access or on a database existing.
+      # Nothing here fetches or seeds anything, so a green run above is already
+      # that proof; this makes the claim explicit rather than implied.
+      - name: Assert no data directory was required
+        run: test ! -d data || (echo "tests created ./data — they should use tmp_path" && exit 1)
