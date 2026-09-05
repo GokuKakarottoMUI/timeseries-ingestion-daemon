@@ -116,3 +116,71 @@ def run(query=None) -> dict:
     if not result:
         logger.warning("Không có block nào để tính feature. Fetch dữ liệu trước.")
     return result
+
+
+# ── Torch hand-off ───────────────────────────────────────────────────────────
+
+def _require_torch():
+    """Import torch on demand — it is an optional dependency, not a core one.
+
+    The ingestion and feature layers run on NumPy alone; pulling a CUDA wheel
+    into the base install would cost gigabytes for users who only want data.
+    """
+    try:
+        import torch
+    except ImportError as exc:                                  # pragma: no cover
+        raise ImportError(
+            "to_torch() requires PyTorch, an optional dependency. "
+            "Install it with: pip install 'timeseries-ingestion-daemon[torch]'"
+        ) from exc
+    return torch
+
+
+def to_torch(entry: dict, device=None) -> dict:
+    """Hand one feature block to torch, sharing memory instead of copying it.
+
+    ``torch.from_numpy`` aliases the NumPy buffer, so the tensors below start out
+    pointing at the very bytes TileDB was read into — no second allocation, and a
+    write through either side is visible from the other.
+
+    The per-column tensors are the ones worth using. The block is Fortran-ordered
+    (chosen so TileDB could take contiguous columns on write), which means:
+
+    * every **column** view is both zero-copy *and* C-contiguous — torch can use
+      it directly, with no hidden materialisation;
+    * the **whole block** is zero-copy but reports ``is_contiguous() == False``
+      (strides ``(1, N)``). Any op that needs C-contiguity will call
+      ``.contiguous()`` internally and copy the lot. That copy is not avoided by
+      handing the block over, only deferred — so prefer the columns, or accept
+      the copy knowingly.
+
+    For contrast, ``torch.tensor(feat)`` always copies.
+
+    Args:
+        entry: one value from ``run()`` — ``{"names", "feat", "timestamp"}``.
+        device: optional torch device. Anything other than CPU **necessarily
+            copies**, since the bytes have to cross to the device.
+
+    Returns:
+        dict with ``names``, ``block`` (N, F), ``timestamp`` (N,) and one
+        ``(N,)`` tensor per feature name.
+    """
+    torch = _require_torch()
+
+    feat, names = entry["feat"], entry["names"]
+    reserved = {"names", "block", "timestamp"}
+    clash = reserved.intersection(names)
+    if clash:
+        raise ValueError(f"Tên cột trùng khoá dành riêng của to_torch(): {sorted(clash)}")
+
+    out: dict = {"names": names, "block": torch.from_numpy(feat)}
+    out["timestamp"] = torch.from_numpy(entry["timestamp"])
+    for j, name in enumerate(names):
+        out[name] = torch.from_numpy(feat[:, j])       # F-order ⇒ contiguous view
+
+    if device is not None:
+        out = {
+            k: (v.to(device) if torch.is_tensor(v) else v)
+            for k, v in out.items()
+        }
+    return out

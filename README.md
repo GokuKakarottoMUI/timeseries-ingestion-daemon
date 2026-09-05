@@ -115,6 +115,30 @@ The EMA/RMA recursions are IIR filters, so they run through
 `scipy.signal.lfilter` (C/Fortran core) with the Pine seed expressed as the
 filter's initial condition — not a Python loop over candles.
 
+### Hand-off to torch
+
+`feature_pipeline.to_torch()` exposes a block to PyTorch without copying it —
+`torch.from_numpy` aliases the same buffer, so a write through either side is
+visible from the other.
+
+The Fortran layout, chosen so TileDB could take contiguous columns on **write**,
+pays off again here on **read**:
+
+| | shares memory | C-contiguous |
+|---|---|---|
+| per-column tensor | yes | **yes** — usable directly |
+| whole `(N, F)` block | yes | no (strides `(1, N)`) |
+| `torch.tensor(block)` | no — always copies | yes |
+
+So the columns are the useful handle. Handing over the whole block is still
+zero-copy, but the first op that needs C-contiguity calls `.contiguous()`
+internally and copies it anyway — the copy is deferred, not removed. The tests
+pin this by pointer identity rather than by inspection, because a stray
+`.contiguous()` doubles the footprint and nothing fails.
+
+torch is an **optional** dependency (`pip install -e ".[torch]"`); everything
+else in the repo runs on NumPy and SciPy alone.
+
 ### Daemon cycle
 
 `continuous_fetch` is meant to stay up for weeks, so the loop is built around returning memory and
@@ -216,7 +240,7 @@ pipeline, not at the storage boundary.
 ```bash
 git clone <repo-url> && cd timeseries-ingestion-daemon
 python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"          # add ",gui" for the config GUI
+pip install -e ".[dev]"          # add ",gui" for the config GUI, ",torch" for the tensor hand-off
 
 pytest                           # no network or existing database needed
 
@@ -282,7 +306,8 @@ get_data/                   read path for training
 indicators/                 feature layer
   primitives.py             Pine-faithful sma / ema / rma / stdev
   engines/                  one class per TradingView script
-  feature_pipeline.py       reads through get_data, appends indicator columns
+  feature_pipeline.py       reads through get_data, appends indicator columns,
+                            hands off to torch without copying
   config/*.yaml
 examples/query_demo.py      end-to-end read example
 examples/indicators_demo.py end-to-end feature example

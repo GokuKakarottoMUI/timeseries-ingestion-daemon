@@ -16,13 +16,13 @@
         },
         "fetch_all": {
             "active": {
-                "value": false,
+                "value": true,
                 "type": "bool"
             }
         },
         "scan_missing_timestamps": {
             "active": {
-                "value": false,
+                "value": true,
                 "type": "bool"
             }
         },

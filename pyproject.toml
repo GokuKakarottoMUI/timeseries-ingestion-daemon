@@ -23,6 +23,10 @@ dependencies = [
 
 [project.optional-dependencies]
 gui = ["PySide6==6.11.1"]
+# Only needed for feature_pipeline.to_torch(). Deliberately kept out of the base
+# install: the ingestion and feature layers run on NumPy alone, and a CUDA wheel
+# is gigabytes for anyone who just wants the data.
+torch = ["torch>=2.0"]
 dev = ["pytest>=8.0"]
 
 [tool.setuptools]

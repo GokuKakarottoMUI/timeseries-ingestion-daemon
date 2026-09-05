@@ -1,8 +1,8 @@
 {
     "timeframes": {
         "1m": {
-            "active": false,
-            "active_featured": false,
+            "active": true,
+            "active_featured": true,
             "active_prediction": false,
             "minutes": 1,
             "seconds": 60
@@ -22,21 +22,21 @@
             "seconds": 300
         },
         "15m": {
-            "active": true,
+            "active": false,
             "active_featured": true,
             "active_prediction": false,
             "minutes": 15,
             "seconds": 900
         },
         "30m": {
-            "active": true,
+            "active": false,
             "active_featured": true,
             "active_prediction": false,
             "minutes": 30,
             "seconds": 1800
         },
         "1h": {
-            "active": true,
+            "active": false,
             "active_featured": true,
             "active_prediction": false,
             "minutes": 60,
@@ -44,7 +44,7 @@
             "hours": 1
         },
         "2h": {
-            "active": true,
+            "active": false,
             "active_featured": true,
             "active_prediction": false,
             "minutes": 120,
@@ -60,7 +60,7 @@
             "hours": 3
         },
         "4h": {
-            "active": true,
+            "active": false,
             "active_featured": true,
             "active_prediction": false,
             "minutes": 240,
@@ -84,7 +84,7 @@
             "hours": 8
         },
         "12h": {
-            "active": true,
+            "active": false,
             "active_featured": true,
             "active_prediction": false,
             "minutes": 720,
@@ -92,7 +92,7 @@
             "hours": 12
         },
         "1d": {
-            "active": true,
+            "active": false,
             "active_featured": true,
             "active_prediction": false,
             "minutes": 1440,
@@ -101,18 +101,18 @@
         }
     },
     "custom_timeframes": {
-        "enable": false,
+        "enable": true,
         "custom_intervals": {
             "11m": {
-                "active": false,
-                "active_featured": false,
+                "active": true,
+                "active_featured": true,
                 "active_prediction": false,
                 "minutes": 11,
                 "source": "1m"
             },
             "22m": {
-                "active": false,
-                "active_featured": false,
+                "active": true,
+                "active_featured": true,
                 "active_prediction": false,
                 "minutes": 22,
                 "source": "1m"
@@ -156,7 +156,7 @@
                 "hours": 8
             },
             "2d": {
-                "active": true,
+                "active": false,
                 "active_featured": true,
                 "active_prediction": false,
                 "minutes": 2880,
@@ -164,7 +164,7 @@
                 "hours": 48
             },
             "3d": {
-                "active": true,
+                "active": false,
                 "active_featured": true,
                 "active_prediction": false,
                 "minutes": 4320,
