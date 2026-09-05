@@ -113,7 +113,13 @@ can prove the Pine reference was read correctly: `python -m examples.tradingview
 prints the values beside readable dates. On BTCUSD daily, six consecutive closed
 candles matched TradingView across all fourteen columns — EMA 9/26/50/100/200,
 MACD line/signal/histogram, RSI and its smoothing MA, and the three Bollinger
-bands — to the precision the chart displays.
+bands.
+
+Checking the tail is not enough on its own. An EMA forgets its seed
+exponentially, so seeding from the wrong value still agrees after a few thousand
+bars — the mistake only shows near the start of the series. So the head was
+checked too: at bar 231 of 5,497 the SMA seed gives 5.07 where seeding from the
+first sample would give 5.55, and the chart reads the former.
 
 Warmup is left as `NaN`. There is no forward-fill and no sentinel value, so the
 consumer decides where its usable history begins rather than inheriting a choice
