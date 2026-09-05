@@ -1,0 +1,34 @@
+# Indicator parameters — the only place these live.
+#
+# Every value here mirrors a default in the corresponding TradingView script, so
+# a chart configured with the stock settings reproduces these columns exactly.
+# Change a number here and the pipeline follows; no Python edit is needed.
+
+# EMA.pine — ta.ema(close, len). The script draws one length at a time; the
+# engine computes the whole set in one pass.
+ema:
+  lengths: [9, 26, 50, 100, 200]
+  source: close
+
+# MACD.pine — defaults: fast 12, slow 26, signal 9, both oscillator and signal
+# MA types are "EMA".
+macd:
+  fast: 12
+  slow: 26
+  signal: 9
+  source: close
+
+# RSI.pine — RSI length 14. The script ships with its smoothing MA enabled
+# ("SMA", length 14), so that line is part of the default indicator and is
+# emitted as rsi_ma_<ma_length>.
+rsi:
+  length: 14
+  ma_length: 14
+  source: close
+
+# Bollinger_Bands.pine — length 20, basis MA type "SMA", StdDev multiplier 2.0.
+# Note ta.stdev is population (biased), not sample.
+bbands:
+  length: 20
+  mult: 2.0
+  source: close

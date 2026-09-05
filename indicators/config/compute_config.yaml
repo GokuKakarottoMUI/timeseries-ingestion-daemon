@@ -1,0 +1,12 @@
+# Compute settings for the feature pipeline.
+
+# dtype of the feature block returned by feature_pipeline.run().
+#
+# float64 keeps the pipeline lossless end to end: TileDB stores float64, get_data
+# returns float64, and the indicators accumulate in float64. Casting to float32
+# here would halve memory but reintroduce the precision problem documented in the
+# README — above ~131k USD the float32 ulp exceeds a 0.01 exchange tick.
+#
+# Set to float32 only if a downstream consumer is memory-bound and has been
+# checked against that limit.
+output_dtype: float64

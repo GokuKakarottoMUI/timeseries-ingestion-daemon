@@ -23,21 +23,21 @@
         },
         "15m": {
             "active": true,
-            "active_featured": false,
+            "active_featured": true,
             "active_prediction": false,
             "minutes": 15,
             "seconds": 900
         },
         "30m": {
             "active": true,
-            "active_featured": false,
+            "active_featured": true,
             "active_prediction": false,
             "minutes": 30,
             "seconds": 1800
         },
         "1h": {
             "active": true,
-            "active_featured": false,
+            "active_featured": true,
             "active_prediction": false,
             "minutes": 60,
             "seconds": 3600,
@@ -45,7 +45,7 @@
         },
         "2h": {
             "active": true,
-            "active_featured": false,
+            "active_featured": true,
             "active_prediction": false,
             "minutes": 120,
             "seconds": 7200,
@@ -61,7 +61,7 @@
         },
         "4h": {
             "active": true,
-            "active_featured": false,
+            "active_featured": true,
             "active_prediction": false,
             "minutes": 240,
             "seconds": 14400,
@@ -85,7 +85,7 @@
         },
         "12h": {
             "active": true,
-            "active_featured": false,
+            "active_featured": true,
             "active_prediction": false,
             "minutes": 720,
             "seconds": 43200,
@@ -93,7 +93,7 @@
         },
         "1d": {
             "active": true,
-            "active_featured": false,
+            "active_featured": true,
             "active_prediction": false,
             "minutes": 1440,
             "seconds": 86400,

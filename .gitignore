@@ -28,3 +28,6 @@ CV.pdf
 *.log
 *.out
 *.synctex.gz
+
+# Indicators
+Tradingview_Indicators/

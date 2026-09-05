@@ -17,6 +17,7 @@ dependencies = [
     "orjson==3.11.9",
     "picologging==0.9.3",
     "PyYAML==6.0.3",
+    "scipy==1.16.3",
     "tiledb==0.36.1",
 ]
 
@@ -25,11 +26,16 @@ gui = ["PySide6==6.11.1"]
 dev = ["pytest>=8.0"]
 
 [tool.setuptools]
-packages = ["ingestion", "ingestion.config", "get_data", "get_data.config"]
+packages = [
+    "ingestion", "ingestion.config",
+    "get_data", "get_data.config",
+    "indicators", "indicators.engines", "indicators.config",
+]
 
 [tool.setuptools.package-data]
 "ingestion.config" = ["*.json"]
 "get_data.config" = ["*.yaml"]
+"indicators.config" = ["*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

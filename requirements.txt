@@ -9,4 +9,5 @@ numpy==2.4.6           # every candle array; all maths is vectorized here
 orjson==3.11.9         # Rust JSON — response + config parsing
 picologging==0.9.3     # C reimplementation of stdlib logging
 PyYAML==6.0.3          # query config; loaded via CSafeLoader (libyaml C)
+scipy==1.16.3          # signal.lfilter — IIR core behind EMA/RMA
 tiledb==0.36.1         # sparse array storage engine (C++)

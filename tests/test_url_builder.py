@@ -3,6 +3,7 @@
 Adding an exchange should be a config change, so these tests drive the builder
 purely through what the JSON declares.
 """
+import ingestion.exchange_utils as exchange_utils
 from ingestion.exchange_utils import ExchangeURLBuilder, _VARIANT_LOOKUP
 
 # 2025-01-01T00:00:00Z .. 2025-01-02T00:00:00Z in ms
@@ -47,11 +48,18 @@ def test_custom_limit_shrinks_the_window():
     assert int(params["end"]) - int(params["start"]) == 10 * 3600
 
 
-def test_inactive_exchange_yields_no_request():
-    """binance is active=false in the shipped config; the builder must refuse
-    rather than silently produce a request for a disabled exchange."""
+def test_inactive_exchange_yields_no_request(monkeypatch):
+    """A disabled exchange must be refused, not silently requested.
+
+    The active flag is pinned here rather than read from the shipped JSON: which
+    exchanges are enabled is runtime state an operator toggles, and a test that
+    depends on it reports on a config file instead of on the builder.
+    """
+    disabled = dict(exchange_utils.EXCHANGE_CONFIGS["bitstamp"], active=False)
+    monkeypatch.setitem(exchange_utils.EXCHANGE_CONFIGS, "bitstamp", disabled)
+
     url, params = ExchangeURLBuilder.get_request_params(
-        "binance", "BTCUSD", "1h", START_MS, END_MS
+        "bitstamp", "BTCUSD", "1h", START_MS, END_MS
     )
     assert (url, params) == ("", {})
 

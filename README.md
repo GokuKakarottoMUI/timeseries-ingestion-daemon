@@ -41,7 +41,10 @@ candles.
    GetDataFromDatabase        one thread + one array handle per symbol
            │                  → (N, 5) float64 Fortran-order block
            ▼
-   training / feature pipeline
+   feature_pipeline           indicator columns appended beside the stored ones
+           │                  → (N, 18) float64, one allocation, warmup left NaN
+           ▼
+   model training
 ```
 
 Storing every timeframe of a symbol inside **one** array (rather than one array per timeframe) is
@@ -81,6 +84,36 @@ and never again for a derived one.
    TensorBuffer → TileDB       written back into the SAME array,
                                under a different timeframe_minutes coordinate
 ```
+
+### Indicators
+
+`indicators/` ports four TradingView scripts to NumPy — EMA, MACD, RSI and
+Bollinger Bands — and appends them to the stored OHLCV as extra columns.
+
+The work is in matching Pine exactly, because an indicator that is *almost* right
+disagrees with the chart the strategy was designed on, silently. Two details carry
+most of that risk:
+
+- **`ta.ema` is seeded with `SMA(length)`, not with the first sample.** The common
+  `adjust=False` shortcut produces a curve that converges only slowly and never
+  quite matches.
+- **Pine counts warmup from the first non-`na` value, not from bar 0.** The MACD
+  signal line is an EMA *of the MACD*, which is itself `na` for 25 bars, so the
+  signal must start at bar 33 — not 8.
+
+Those warmup boundaries are asserted per column in the test suite, since an
+off-by-one there stays plausible-looking and wrong.
+
+Warmup is left as `NaN`. There is no forward-fill and no sentinel value, so the
+consumer decides where its usable history begins rather than inheriting a choice
+made here — and a filled-in value can never be mistaken for a real one.
+
+`ta.stdev` is the population form (`ddof=0`); using the sample form would widen
+every Bollinger band by a constant factor without ever raising.
+
+The EMA/RMA recursions are IIR filters, so they run through
+`scipy.signal.lfilter` (C/Fortran core) with the Pine seed expressed as the
+filter's initial condition — not a Python loop over candles.
 
 ### Daemon cycle
 
@@ -190,6 +223,7 @@ pytest                           # no network or existing database needed
 python -m ingestion.api_fetch    # one fetch pass; creates ./data/market_data/...
 python -m ingestion.query_data   # inspect what landed: counts, range, gaps
 python -m examples.query_demo    # read it back the way a training job would
+python -m examples.indicators_demo  # compute indicators and show the feature block
 ```
 
 Data goes to `./data/` inside the repo. To put it elsewhere, set `TSD_DATA_ROOT`:
@@ -206,6 +240,7 @@ TSD_DATA_ROOT=/mnt/fast-ssd/candles python -m ingestion.api_fetch
 | `python -m ingestion.continuous_fetch` | The daemon — same pass on a loop, with the memory guards and self-restart |
 | `python -m ingestion.query_data` | Inspect one symbol/timeframe: candle count, min/max, duplicates, gap report |
 | `python -m examples.query_demo` | Read every active symbol back and print block shape / dtype / zero-copy status |
+| `python -m examples.indicators_demo` | Compute the indicator features and print each column's shape and warmup boundary |
 | `python -m ingestion.unified_config_manager` | PySide6 GUI to edit the JSON configs and run the daemon with live logs |
 
 ## Configuration
@@ -220,6 +255,8 @@ Everything is JSON/YAML; no code change is needed to add a symbol, a timeframe o
 | `ingestion/config/historical_data_config.json` | Start date, `fetch_all` mode, missing-timestamp scan, fetch/write concurrency, write rate cap |
 | `ingestion/config/continuous_fetch_mode.json` | Daemon loop intervals and the RSS ceiling that triggers a restart |
 | `get_data/config/query_config.yaml` | Read side: query the full history or from a date, and reader thread count |
+| `indicators/config/indicators_config.yaml` | Indicator parameters: EMA lengths, MACD periods, RSI length, Bollinger length and multiplier |
+| `indicators/config/compute_config.yaml` | Feature block output dtype |
 
 The `active` flags are hierarchical — a symbol is only fetched when its market, its category and
 the symbol itself are all active.
@@ -242,7 +279,13 @@ ingestion/                  fetch + storage
 get_data/                   read path for training
   get_data_from_database.py parallel per-symbol read → contiguous float64 blocks
   config/query_config.yaml
+indicators/                 feature layer
+  primitives.py             Pine-faithful sma / ema / rma / stdev
+  engines/                  one class per TradingView script
+  feature_pipeline.py       reads through get_data, appends indicator columns
+  config/*.yaml
 examples/query_demo.py      end-to-end read example
+examples/indicators_demo.py end-to-end feature example
 tests/                      pytest suite (no network, no pre-existing database)
 ```
 

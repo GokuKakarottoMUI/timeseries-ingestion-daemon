@@ -5,18 +5,37 @@ of being re-fetched, so the aggregation has to reproduce exactly what the
 exchange would have returned: open of the first candle, close of the last, max
 high, min low, summed volume — per slot.
 
-``2d`` (built from ``1d``) is the active custom timeframe in the shipped config.
-Slots for intervals longer than a day are anchored at 1 Jan UTC of the year.
+These tests build ``2d`` from ``1d``. Slots for intervals longer than a day are
+anchored at 1 Jan UTC of the year.
 """
 from datetime import datetime, timezone
 
 import numpy as np
 import pytest
 
+import ingestion.calculate_tf_and_custom_tf as ctf
 from ingestion.calculate_tf_and_custom_tf import Calculate_Tf_And_CustomTF
 
 DAY_MS = 86_400_000
 YEAR_START = int(datetime(2024, 1, 1, tzinfo=timezone.utc).timestamp() * 1000)
+
+# Custom-timeframe definitions owned by the tests. The shipped JSON is runtime
+# state an operator toggles from the config GUI; a test that reads it would pass
+# or fail depending on a checkbox, which says nothing about the aggregation.
+TEST_CUSTOM_TIMEFRAMES = {
+    "enable": True,
+    "custom_intervals": {
+        "2d": {"active": True, "active_featured": True,
+               "minutes": 2880, "hours": 48, "source": "1d"},
+        "8d": {"active": False, "active_featured": False,
+               "minutes": 11520, "hours": 192, "source": "1d"},
+    },
+}
+
+
+@pytest.fixture(autouse=True)
+def pinned_custom_timeframes(monkeypatch):
+    monkeypatch.setattr(ctf, "CUSTOM_TIMEFRAMES", TEST_CUSTOM_TIMEFRAMES)
 
 
 @pytest.fixture
