@@ -1,8 +1,8 @@
 {
     "timeframes": {
         "1m": {
-            "active": true,
-            "active_featured": true,
+            "active": false,
+            "active_featured": false,
             "active_prediction": false,
             "minutes": 1,
             "seconds": 60
@@ -92,7 +92,7 @@
             "hours": 12
         },
         "1d": {
-            "active": false,
+            "active": true,
             "active_featured": true,
             "active_prediction": false,
             "minutes": 1440,
@@ -101,18 +101,18 @@
         }
     },
     "custom_timeframes": {
-        "enable": true,
+        "enable": false,
         "custom_intervals": {
             "11m": {
                 "active": true,
-                "active_featured": true,
+                "active_featured": false,
                 "active_prediction": false,
                 "minutes": 11,
                 "source": "1m"
             },
             "22m": {
                 "active": true,
-                "active_featured": true,
+                "active_featured": false,
                 "active_prediction": false,
                 "minutes": 22,
                 "source": "1m"

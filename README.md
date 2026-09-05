@@ -108,6 +108,13 @@ most of that risk:
 Those warmup boundaries are asserted per column in the test suite, since an
 off-by-one there stays plausible-looking and wrong.
 
+The port is also checked against the chart itself, which is the only thing that
+can prove the Pine reference was read correctly: `python -m examples.tradingview_check`
+prints the values beside readable dates. On BTCUSD daily, six consecutive closed
+candles matched TradingView across all fourteen columns — EMA 9/26/50/100/200,
+MACD line/signal/histogram, RSI and its smoothing MA, and the three Bollinger
+bands — to the precision the chart displays.
+
 Warmup is left as `NaN`. There is no forward-fill and no sentinel value, so the
 consumer decides where its usable history begins rather than inheriting a choice
 made here — and a filled-in value can never be mistaken for a real one.
